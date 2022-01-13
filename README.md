@@ -1,7 +1,7 @@
 <h1 align="center">SimplePlayTime</h1>
 
 <p align="center">
-	<img src="https://img.shields.io/badge/Minecraft-1.16--1.18-orange" alt="Minecraft versions">
+	<img src="https://img.shields.io/badge/Minecraft-1.14--1.18-orange" alt="Minecraft versions">
 	<img src="https://img.shields.io/github/v/release/hyperdefined/SimplePlayTime" alt="GitHub release (latest by date)">
 	<a href="https://github.com/hyperdefined/SimplePlayTime/releases"><img src="https://img.shields.io/github/downloads/hyperdefined/SimplePlayTime/total?logo=github" alt="Downloads"></a>
 	<a href="https://en.cryptobadges.io/donate/1F29aNKQzci3ga5LDcHHawYzFPXvELTFoL"><img src="https://en.cryptobadges.io/badge/micro/1F29aNKQzci3ga5LDcHHawYzFPXvELTFoL" alt="Donate with Bitcoin"></a>
@@ -10,7 +10,7 @@
 	<a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a>
 </p>
 
-SimplePlayTime track playtime of players on your server.
+SimplePlayTime tracks playtime of players on your server.
 
 ![Image](https://raw.githubusercontent.com/hyperdefined/SimplePlayTime/master/example.png)
 
