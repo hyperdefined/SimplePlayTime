@@ -54,8 +54,6 @@ public class PlayerCounter extends BukkitRunnable {
             }
             // add 1 second to playtime
             container.set(simplePlayTime.playtimeKey, PersistentDataType.INTEGER, playTime + 1);
-        } else {
-            player.sendMessage("lol");
         }
     }
 }
