@@ -1,0 +1,3 @@
+# How many seconds should a play be AFK in order to not count playtime?
+# This time is in seconds.
+afk-timeout: 30

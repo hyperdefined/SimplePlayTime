@@ -1,0 +1,10 @@
+name: SimplePlayTime
+version: '${project.version}'
+main: lol.hyper.simpleplaytime.SimplePlayTime
+api-version: 1.18
+author: hyperdefined
+description: Super simple playtime tracking.
+commands:
+  playtime:
+    usage: /playtime
+    description: See your playtime.
