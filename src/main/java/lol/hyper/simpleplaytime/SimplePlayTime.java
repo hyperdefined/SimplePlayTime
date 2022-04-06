@@ -101,6 +101,7 @@ public final class SimplePlayTime extends JavaPlugin {
 
     /**
      * Gets a message from messages.yml.
+     *
      * @param path The path to the message.
      * @return Component with formatting applied.
      */
@@ -114,7 +115,7 @@ public final class SimplePlayTime extends JavaPlugin {
     }
 
     public BukkitAudiences getAdventure() {
-        if(this.adventure == null) {
+        if (this.adventure == null) {
             throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
         }
         return this.adventure;
