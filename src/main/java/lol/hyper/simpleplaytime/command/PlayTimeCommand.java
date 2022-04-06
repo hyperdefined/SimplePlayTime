@@ -17,9 +17,9 @@
 
 package lol.hyper.simpleplaytime.command;
 
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import lol.hyper.simpleplaytime.SimplePlayTime;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -41,9 +41,20 @@ public class PlayTimeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof ConsoleCommandSender) {
-            sender.sendMessage(ChatColor.RED + "This command is for players only.");
+            simplePlayTime.getAdventure().sender(sender).sendMessage(simplePlayTime.getMessage("messages.players-only"));
             return true;
         }
+
+        if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+            if (sender.hasPermission("simpleplaytime.reload")) {
+                simplePlayTime.loadConfig();
+                simplePlayTime.getAdventure().sender(sender).sendMessage(simplePlayTime.miniMessage.deserialize("<green>Configuration reloaded!</green>"));
+            } else {
+                simplePlayTime.getAdventure().sender(sender).sendMessage(simplePlayTime.miniMessage.deserialize("<red>You do not have permission for this command.</red>"));
+            }
+            return true;
+        }
+
         Player player = (Player) sender;
         PersistentDataContainer container = player.getPersistentDataContainer();
         Integer playTime = 0;
@@ -58,8 +69,33 @@ public class PlayTimeCommand implements CommandExecutor {
         long hours = TimeUnit.SECONDS.toHours(playTime) - (days * 24L);
         long minutes = TimeUnit.SECONDS.toMinutes(playTime) - (TimeUnit.SECONDS.toHours(playTime) * 60);
         long seconds = TimeUnit.SECONDS.toSeconds(playTime) - (TimeUnit.SECONDS.toMinutes(playTime) * 60);
-        String message = String.format(ChatColor.GREEN + "You have played for %o days, %o hours, %o minutes, %o seconds.", days, hours, minutes, seconds);
-        player.sendMessage(message);
+        Component message = formatTime(days, hours, minutes, seconds);
+        simplePlayTime.getAdventure().player(player).sendMessage(message);
         return true;
+    }
+
+    /**
+     * Formats the config message to have the player's time.
+     * @param days Days.
+     * @param hours Hours.
+     * @param minutes Minutes.
+     * @param seconds Seconds.
+     * @return A formatted string with the data replaced.
+     */
+    private Component formatTime(int days, long hours, long minutes, long seconds) {
+        String message = simplePlayTime.config.getString("messages.playtime-command");
+        if (message.contains("%days%")) {
+            message = message.replace("%days%", String.valueOf(days));
+        }
+        if (message.contains("%hours%")) {
+            message = message.replace("%hours%", String.valueOf(hours));
+        }
+        if (message.contains("%minutes%")) {
+            message = message.replace("%minutes%", String.valueOf(minutes));
+        }
+        if (message.contains("%seconds%")) {
+            message = message.replace("%seconds%", String.valueOf(seconds));
+        }
+        return simplePlayTime.miniMessage.deserialize(message);
     }
 }

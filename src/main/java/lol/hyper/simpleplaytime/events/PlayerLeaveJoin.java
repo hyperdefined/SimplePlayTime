@@ -19,7 +19,6 @@ package lol.hyper.simpleplaytime.events;
 
 import lol.hyper.simpleplaytime.PlayerCounter;
 import lol.hyper.simpleplaytime.SimplePlayTime;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -46,7 +45,7 @@ public class PlayerLeaveJoin implements Listener {
         if (!container.has(simplePlayTime.playtimeKey, PersistentDataType.INTEGER)) {
             // set their play time to zero seconds
             container.set(simplePlayTime.playtimeKey, PersistentDataType.INTEGER, 0);
-            player.sendMessage(ChatColor.GREEN + "Your playtime is now being tracked! See your playtime via /playtime!");
+            simplePlayTime.getAdventure().player(player).sendMessage(simplePlayTime.getMessage("messages.playtime-start"));
         }
         // create the task for player
         BukkitTask runnable = new PlayerCounter(player, simplePlayTime).runTaskTimer(simplePlayTime, 0, 20);

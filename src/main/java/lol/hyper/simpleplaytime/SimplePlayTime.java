@@ -21,6 +21,9 @@ import lol.hyper.githubreleaseapi.GitHubRelease;
 import lol.hyper.githubreleaseapi.GitHubReleaseAPI;
 import lol.hyper.simpleplaytime.command.PlayTimeCommand;
 import lol.hyper.simpleplaytime.events.*;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -43,10 +46,14 @@ public final class SimplePlayTime extends JavaPlugin {
     public final File configFile = new File(this.getDataFolder(), "config.yml");
     public FileConfiguration config;
 
+    public final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private BukkitAudiences adventure;
+
     public final NamespacedKey playtimeKey = new NamespacedKey(this, "playtime");
 
     @Override
     public void onEnable() {
+        this.adventure = BukkitAudiences.create(this);
         loadConfig();
         Bukkit.getPluginManager().registerEvents(new InteractionEvents(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveJoin(this), this);
@@ -63,7 +70,7 @@ public final class SimplePlayTime extends JavaPlugin {
             this.saveResource("config.yml", true);
         }
         config = YamlConfiguration.loadConfiguration(configFile);
-        int CONFIG_VERSION = 1;
+        int CONFIG_VERSION = 2;
         if (config.getInt("config-version") != CONFIG_VERSION) {
             logger.warning("You configuration is out of date! Some features may not work!");
         }
@@ -90,5 +97,26 @@ public final class SimplePlayTime extends JavaPlugin {
         } else {
             logger.warning("A new version is available (" + latest.getTagVersion() + ")! You are running version " + current.getTagVersion() + ". You are " + buildsBehind + " version(s) behind.");
         }
+    }
+
+    /**
+     * Gets a message from messages.yml.
+     * @param path The path to the message.
+     * @return Component with formatting applied.
+     */
+    public Component getMessage(String path) {
+        String message = config.getString(path);
+        if (message == null) {
+            logger.warning(path + " is not a valid message!");
+            return miniMessage.deserialize("<red>Invalid path! " + path + "</red>");
+        }
+        return miniMessage.deserialize(message);
+    }
+
+    public BukkitAudiences getAdventure() {
+        if(this.adventure == null) {
+            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
+        }
+        return this.adventure;
     }
 }

@@ -1,3 +1,11 @@
 # How many seconds should a play be AFK in order to not count playtime?
 # This time is in seconds.
 afk-timeout: 30
+
+messages:
+  players-only: "<red>This command is for players only.</red>"
+  playtime-start: "<green>Your playtime is now being tracked! See your playtime via /playtime!</green>"
+  # use %o for each time placeholder. make sure it stays in this order!
+  playtime-command: "<green>You have played for %days% days, %hours% hours, %minutes% minutes, %seconds% seconds.</green>"
+
+config-version: 2
