@@ -76,8 +76,9 @@ public class PlayTimeCommand implements CommandExecutor {
 
     /**
      * Formats the config message to have the player's time.
-     * @param days Days.
-     * @param hours Hours.
+     *
+     * @param days    Days.
+     * @param hours   Hours.
      * @param minutes Minutes.
      * @param seconds Seconds.
      * @return A formatted string with the data replaced.
