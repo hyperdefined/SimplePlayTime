@@ -20,7 +20,7 @@ SimplePlayTime tracks playtime of players on your server.
 * Command to see your playtime via `/playtime`.
 
 ## Documentation
-Visit the [wiki](https://docs.hyper.lol/SimplePlayTime) for help.
+Visit the [wiki](https://github.com/hyperdefined/SimplePlayTime/wiki) for help.
 
 ## License
 This plugin is released under GNU General Public License v3. See [LICENSE](https://github.com/hyperdefined/SimplePlayTime/blob/master/LICENSE).
