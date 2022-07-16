@@ -49,9 +49,9 @@ public class PlayTimeCommand implements CommandExecutor {
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             if (sender.hasPermission("simpleplaytime.reload")) {
                 simplePlayTime.loadConfig();
-                simplePlayTime.getAdventure().sender(sender).sendMessage(simplePlayTime.miniMessage.deserialize("<green>Configuration reloaded!</green>"));
+                simplePlayTime.getAdventure().sender(sender).sendMessage(Component.text("Configuration reloaded!").color(NamedTextColor.GREEN));
             } else {
-                simplePlayTime.getAdventure().sender(sender).sendMessage(simplePlayTime.miniMessage.deserialize("<red>You do not have permission for this command.</red>"));
+                simplePlayTime.getAdventure().sender(sender).sendMessage(Component.text("You do not have permission for this command.").color(NamedTextColor.RED));
             }
             return true;
         }
@@ -67,9 +67,9 @@ public class PlayTimeCommand implements CommandExecutor {
             return true;
         }
         int days = (int) TimeUnit.SECONDS.toDays(playTime);
-        long hours = TimeUnit.SECONDS.toHours(playTime) - (days * 24L);
-        long minutes = TimeUnit.SECONDS.toMinutes(playTime) - (TimeUnit.SECONDS.toHours(playTime) * 60);
-        long seconds = TimeUnit.SECONDS.toSeconds(playTime) - (TimeUnit.SECONDS.toMinutes(playTime) * 60);
+        int hours = (int) (TimeUnit.SECONDS.toHours(playTime) - (days * 24L));
+        int minutes = (int) (TimeUnit.SECONDS.toMinutes(playTime) - (TimeUnit.SECONDS.toHours(playTime) * 60));
+        int seconds = (int) (TimeUnit.SECONDS.toSeconds(playTime) - (TimeUnit.SECONDS.toMinutes(playTime) * 60));
         Component message = formatTime(days, hours, minutes, seconds);
         simplePlayTime.getAdventure().player(player).sendMessage(message);
         return true;
@@ -84,7 +84,7 @@ public class PlayTimeCommand implements CommandExecutor {
      * @param seconds Seconds.
      * @return A formatted string with the data replaced.
      */
-    private Component formatTime(int days, long hours, long minutes, long seconds) {
+    private Component formatTime(int days, int hours, int minutes, int seconds) {
         String message = simplePlayTime.config.getString("messages.playtime-command");
         if (message == null) {
             return Component.text("Missing message 'messages.playtime-command'").color(NamedTextColor.RED);
