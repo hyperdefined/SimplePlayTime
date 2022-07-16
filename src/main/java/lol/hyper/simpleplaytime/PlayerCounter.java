@@ -17,21 +17,20 @@
 
 package lol.hyper.simpleplaytime;
 
-import org.bukkit.entity.Player;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.UUID;
 
 public class PlayerCounter extends BukkitRunnable {
 
-    final Player player;
-    final PersistentDataContainer container;
-    final SimplePlayTime simplePlayTime;
+    private final UUID player;
+    private final SimplePlayTime simplePlayTime;
 
-    public PlayerCounter(Player player, SimplePlayTime simplePlayTime) {
+    public PlayerCounter(UUID player, SimplePlayTime simplePlayTime) {
         this.player = player;
         this.simplePlayTime = simplePlayTime;
-        container = player.getPersistentDataContainer();
+        // start the session with 0 seconds
+        simplePlayTime.playerSessions.put(player, 0);
     }
 
     @Override
@@ -42,18 +41,8 @@ public class PlayerCounter extends BukkitRunnable {
         long lastInteraction = (currentTime - simplePlayTime.playerActivity.get(player)) / 1000000000;
         // if it's shorter than the afk timeout, count the playtime
         if (lastInteraction <= simplePlayTime.config.getInt("afk-timeout")) {
-            Integer playTime = 0;
-            // get the current playtime
-            if (container.has(simplePlayTime.playtimeKey, PersistentDataType.INTEGER)) {
-                playTime = container.get(simplePlayTime.playtimeKey, PersistentDataType.INTEGER);
-            }
-            if (playTime == null) {
-                simplePlayTime.logger.severe("Unable to find key for player " + player.getName() + ". This IS a bug. Player's current keys: " + container.getKeys());
-                this.cancel();
-                return;
-            }
-            // add 1 second to playtime
-            container.set(simplePlayTime.playtimeKey, PersistentDataType.INTEGER, playTime + 1);
+            int currentSeconds = simplePlayTime.playerSessions.get(player);
+            simplePlayTime.playerSessions.put(player, currentSeconds + 1);
         }
     }
 }

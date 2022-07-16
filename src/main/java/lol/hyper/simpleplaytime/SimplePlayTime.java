@@ -29,19 +29,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 public final class SimplePlayTime extends JavaPlugin {
 
-    public final HashMap<Player, BukkitTask> playerRunnable = new HashMap<>();
-    public final HashMap<Player, Long> playerActivity = new HashMap<>();
+    public final HashMap<UUID, BukkitTask> playerRunnable = new HashMap<>();
+    public final HashMap<UUID, Long> playerActivity = new HashMap<>();
+    public final HashMap<UUID, Integer> playerSessions = new HashMap<>();
     public final Logger logger = this.getLogger();
     public final File configFile = new File(this.getDataFolder(), "config.yml");
     public FileConfiguration config;

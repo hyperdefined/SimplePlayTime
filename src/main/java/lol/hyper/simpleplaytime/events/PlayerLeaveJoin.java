@@ -48,16 +48,25 @@ public class PlayerLeaveJoin implements Listener {
             simplePlayTime.getAdventure().player(player).sendMessage(simplePlayTime.getMessage("messages.playtime-start"));
         }
         // create the task for player
-        BukkitTask runnable = new PlayerCounter(player, simplePlayTime).runTaskTimer(simplePlayTime, 0, 20);
-        simplePlayTime.playerRunnable.put(player, runnable);
+        BukkitTask runnable = new PlayerCounter(player.getUniqueId(), simplePlayTime).runTaskTimer(simplePlayTime, 0, 20);
+        simplePlayTime.playerRunnable.put(player.getUniqueId(), runnable);
 
         // store last player activity
-        simplePlayTime.playerActivity.put(player, System.nanoTime());
+        simplePlayTime.playerActivity.put(player.getUniqueId(), System.nanoTime());
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        simplePlayTime.playerRunnable.get(player).cancel();
+
+        // set the player's time recorded in their last session
+        PersistentDataContainer container = player.getPersistentDataContainer();
+        if (container.has(simplePlayTime.playtimeKey, PersistentDataType.INTEGER)) {
+            int lastSession = simplePlayTime.playerSessions.get(player.getUniqueId());
+            container.set(simplePlayTime.playtimeKey, PersistentDataType.INTEGER, lastSession);
+        }
+        // stop the counter for this player
+        simplePlayTime.playerRunnable.get(player.getUniqueId()).cancel();
+        simplePlayTime.playerSessions.remove(player.getUniqueId());
     }
 }

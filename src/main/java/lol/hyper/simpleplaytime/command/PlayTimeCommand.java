@@ -18,6 +18,7 @@
 package lol.hyper.simpleplaytime.command;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
 import lol.hyper.simpleplaytime.SimplePlayTime;
 import org.bukkit.command.Command;
@@ -85,6 +86,9 @@ public class PlayTimeCommand implements CommandExecutor {
      */
     private Component formatTime(int days, long hours, long minutes, long seconds) {
         String message = simplePlayTime.config.getString("messages.playtime-command");
+        if (message == null) {
+            return Component.text("Missing message 'messages.playtime-command'").color(NamedTextColor.RED);
+        }
         if (message.contains("%days%")) {
             message = message.replace("%days%", String.valueOf(days));
         }

@@ -25,6 +25,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 
+import java.util.UUID;
+
 public class InteractionEvents implements Listener {
 
     private final SimplePlayTime simplePlayTime;
@@ -35,42 +37,42 @@ public class InteractionEvents implements Listener {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
+        UUID player = event.getPlayer().getUniqueId();
         // store last player activity
         simplePlayTime.playerActivity.put(player, System.nanoTime());
     }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
+        UUID player = event.getPlayer().getUniqueId();
         // store last player activity
         simplePlayTime.playerActivity.put(player, System.nanoTime());
     }
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
+        UUID player = event.getPlayer().getUniqueId();
         // store last player activity
         simplePlayTime.playerActivity.put(player, System.nanoTime());
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
-        Player player = event.getEntity();
+        UUID player = event.getEntity().getUniqueId();
         // store last player activity
         simplePlayTime.playerActivity.put(player, System.nanoTime());
     }
 
     @EventHandler
     public void onInteractEntity(PlayerInteractEntityEvent event) {
-        Player player = event.getPlayer();
+        UUID player = event.getPlayer().getUniqueId();
         // store last player activity
         simplePlayTime.playerActivity.put(player, System.nanoTime());
     }
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
-        Player player = event.getPlayer();
+        UUID player = event.getPlayer().getUniqueId();
         // store last player activity
         simplePlayTime.playerActivity.put(player, System.nanoTime());
     }
@@ -78,7 +80,7 @@ public class InteractionEvents implements Listener {
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
+            UUID player = event.getEntity().getUniqueId();
             // store last player activity
             simplePlayTime.playerActivity.put(player, System.nanoTime());
         }
@@ -86,35 +88,35 @@ public class InteractionEvents implements Listener {
 
     @EventHandler
     public void onSneak(PlayerToggleSneakEvent event) {
-        Player player = event.getPlayer();
+        UUID player = event.getPlayer().getUniqueId();
         // store last player activity
         simplePlayTime.playerActivity.put(player, System.nanoTime());
     }
 
     @EventHandler
     public void onSwap(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
+        UUID player = event.getPlayer().getUniqueId();
         // store last player activity
         simplePlayTime.playerActivity.put(player, System.nanoTime());
     }
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
-        Player player = event.getPlayer();
+        UUID player = event.getPlayer().getUniqueId();
         // store last player activity
         simplePlayTime.playerActivity.put(player, System.nanoTime());
     }
 
     @EventHandler
     public void onSwitch(PlayerItemHeldEvent event) {
-        Player player = event.getPlayer();
+        UUID player = event.getPlayer().getUniqueId();
         // store last player activity
         simplePlayTime.playerActivity.put(player, System.nanoTime());
     }
 
     @EventHandler
     public void onFish(PlayerFishEvent event) {
-        Player player = event.getPlayer();
+        UUID player = event.getPlayer().getUniqueId();
         // store last player activity
         simplePlayTime.playerActivity.put(player, System.nanoTime());
     }
