@@ -66,6 +66,10 @@ public class PlayTimeCommand implements CommandExecutor {
             simplePlayTime.logger.severe("Unable to find key for player " + player.getName() + ". This IS a bug. Player's current keys: " + container.getKeys());
             return true;
         }
+
+        int currentSession = simplePlayTime.playerSessions.get(player.getUniqueId());
+        // make sure to account for their current session
+        playTime = playTime + currentSession;
         int days = (int) TimeUnit.SECONDS.toDays(playTime);
         int hours = (int) (TimeUnit.SECONDS.toHours(playTime) - (days * 24L));
         int minutes = (int) (TimeUnit.SECONDS.toMinutes(playTime) - (TimeUnit.SECONDS.toHours(playTime) * 60));
