@@ -21,6 +21,8 @@ import lol.hyper.simpleplaytime.SimplePlayTime;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
@@ -116,6 +118,20 @@ public class InteractionEvents implements Listener {
 
     @EventHandler
     public void onFish(PlayerFishEvent event) {
+        UUID player = event.getPlayer().getUniqueId();
+        // store last player activity
+        simplePlayTime.playerActivity.put(player, System.nanoTime());
+    }
+
+    @EventHandler
+    public void onBreak(BlockBreakEvent event) {
+        UUID player = event.getPlayer().getUniqueId();
+        // store last player activity
+        simplePlayTime.playerActivity.put(player, System.nanoTime());
+    }
+
+    @EventHandler
+    public void onPlace(BlockPlaceEvent event) {
         UUID player = event.getPlayer().getUniqueId();
         // store last player activity
         simplePlayTime.playerActivity.put(player, System.nanoTime());
