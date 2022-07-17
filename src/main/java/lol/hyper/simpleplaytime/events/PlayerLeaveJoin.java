@@ -59,12 +59,19 @@ public class PlayerLeaveJoin implements Listener {
     public void onLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
-        // set the player's time recorded in their last session
         PersistentDataContainer container = player.getPersistentDataContainer();
+        Integer currentPlayTime = null;
         if (container.has(simplePlayTime.playtimeKey, PersistentDataType.INTEGER)) {
-            int lastSession = simplePlayTime.playerSessions.get(player.getUniqueId());
-            container.set(simplePlayTime.playtimeKey, PersistentDataType.INTEGER, lastSession);
+            currentPlayTime = container.get(simplePlayTime.playtimeKey, PersistentDataType.INTEGER);
         }
+        // make sure the player has the key
+        if (currentPlayTime == null) {
+            simplePlayTime.logger.severe("Unable to find key for player " + player.getName() + ". This IS a bug. Player's current keys: " + container.getKeys());
+            return;
+        }
+        // set the player's time recorded in their last session + their current time recorded
+        int newPlayTime = simplePlayTime.playerSessions.get(player.getUniqueId()) + currentPlayTime;
+        container.set(simplePlayTime.playtimeKey, PersistentDataType.INTEGER, newPlayTime);
         // stop the counter for this player
         simplePlayTime.playerRunnable.get(player.getUniqueId()).cancel();
         simplePlayTime.playerSessions.remove(player.getUniqueId());
