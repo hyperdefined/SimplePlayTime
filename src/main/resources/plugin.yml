@@ -8,3 +8,11 @@ commands:
   playtime:
     usage: /playtime
     description: See your playtime.
+    permission: simpleplaytime.command
+permissions:
+  simpleplaytime.command:
+    description: Allows the usage of /playtime.
+    default: true
+  simpleplaytime.reload:
+    description: Allows the usage of /playtime reload.
+    default: op

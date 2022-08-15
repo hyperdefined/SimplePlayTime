@@ -46,6 +46,11 @@ public class PlayTimeCommand implements CommandExecutor {
             return true;
         }
 
+        if (!sender.hasPermission("simpleplaytime.command")) {
+            simplePlayTime.getAdventure().sender(sender).sendMessage(Component.text("You do not have permission for this command.").color(NamedTextColor.RED));
+            return true;
+        }
+
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             if (sender.hasPermission("simpleplaytime.reload")) {
                 simplePlayTime.loadConfig();
