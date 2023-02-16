@@ -23,6 +23,7 @@ import lol.hyper.simpleplaytime.command.PlayTimeCommand;
 import lol.hyper.simpleplaytime.events.*;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -110,7 +111,7 @@ public final class SimplePlayTime extends JavaPlugin {
         String message = config.getString(path);
         if (message == null) {
             logger.warning(path + " is not a valid message!");
-            return miniMessage.deserialize("<red>Invalid path! " + path + "</red>");
+            return Component.text("Invalid path! " + path).color(NamedTextColor.RED);
         }
         return miniMessage.deserialize(message);
     }

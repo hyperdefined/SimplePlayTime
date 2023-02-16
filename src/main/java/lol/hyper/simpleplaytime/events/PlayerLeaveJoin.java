@@ -19,6 +19,7 @@ package lol.hyper.simpleplaytime.events;
 
 import lol.hyper.simpleplaytime.PlayerCounter;
 import lol.hyper.simpleplaytime.SimplePlayTime;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,9 +32,11 @@ import org.bukkit.scheduler.BukkitTask;
 public class PlayerLeaveJoin implements Listener {
 
     private final SimplePlayTime simplePlayTime;
+    private final BukkitAudiences audiences;
 
     public PlayerLeaveJoin(SimplePlayTime simplePlayTime) {
         this.simplePlayTime = simplePlayTime;
+        this.audiences = simplePlayTime.getAdventure();
     }
 
     @EventHandler
@@ -49,7 +52,7 @@ public class PlayerLeaveJoin implements Listener {
         if (!container.has(simplePlayTime.playtimeKey, PersistentDataType.LONG)) {
             // set their play time to zero seconds
             container.set(simplePlayTime.playtimeKey, PersistentDataType.LONG, 0L);
-            simplePlayTime.getAdventure().player(player).sendMessage(simplePlayTime.getMessage("messages.playtime-start"));
+            audiences.player(player).sendMessage(simplePlayTime.getMessage("messages.playtime-start"));
         }
         // create the task for player
         BukkitTask runnable = new PlayerCounter(player.getUniqueId(), simplePlayTime).runTaskTimer(simplePlayTime, 0, 20);
