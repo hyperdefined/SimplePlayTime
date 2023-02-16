@@ -41,10 +41,14 @@ public class PlayerLeaveJoin implements Listener {
         Player player = event.getPlayer();
         PersistentDataContainer container = player.getPersistentDataContainer();
 
+        if (container.has(simplePlayTime.playtimeKey, PersistentDataType.INTEGER)) {
+            convertDataType(player);
+        }
+
         // player does not have the playtime key, give it to them
-        if (!container.has(simplePlayTime.playtimeKey, PersistentDataType.INTEGER)) {
+        if (!container.has(simplePlayTime.playtimeKey, PersistentDataType.LONG)) {
             // set their play time to zero seconds
-            container.set(simplePlayTime.playtimeKey, PersistentDataType.INTEGER, 0);
+            container.set(simplePlayTime.playtimeKey, PersistentDataType.LONG, 0L);
             simplePlayTime.getAdventure().player(player).sendMessage(simplePlayTime.getMessage("messages.playtime-start"));
         }
         // create the task for player
@@ -60,9 +64,9 @@ public class PlayerLeaveJoin implements Listener {
         Player player = event.getPlayer();
 
         PersistentDataContainer container = player.getPersistentDataContainer();
-        Integer currentPlayTime = null;
-        if (container.has(simplePlayTime.playtimeKey, PersistentDataType.INTEGER)) {
-            currentPlayTime = container.get(simplePlayTime.playtimeKey, PersistentDataType.INTEGER);
+        Long currentPlayTime = null;
+        if (container.has(simplePlayTime.playtimeKey, PersistentDataType.LONG)) {
+            currentPlayTime = container.get(simplePlayTime.playtimeKey, PersistentDataType.LONG);
         }
         // make sure the player has the key
         if (currentPlayTime == null) {
@@ -70,10 +74,29 @@ public class PlayerLeaveJoin implements Listener {
             return;
         }
         // set the player's time recorded in their last session + their current time recorded
-        int newPlayTime = simplePlayTime.playerSessions.get(player.getUniqueId()) + currentPlayTime;
-        container.set(simplePlayTime.playtimeKey, PersistentDataType.INTEGER, newPlayTime);
+        long newPlayTime = simplePlayTime.playerSessions.get(player.getUniqueId()) + currentPlayTime;
+        container.set(simplePlayTime.playtimeKey, PersistentDataType.LONG, newPlayTime);
         // stop the counter for this player
         simplePlayTime.playerRunnable.get(player.getUniqueId()).cancel();
         simplePlayTime.playerSessions.remove(player.getUniqueId());
+    }
+
+    /**
+     * The plugin (as of 1.2.2) uses longs to save total seconds. However, we need to convert the old ints to longs.
+     *
+     * @param player The player to convert.
+     */
+    private void convertDataType(Player player) {
+        PersistentDataContainer container = player.getPersistentDataContainer();
+        Integer oldSeconds = null;
+        // don't need to check if the player has this, since we already did
+        oldSeconds = container.get(simplePlayTime.playtimeKey, PersistentDataType.INTEGER);
+        if (oldSeconds == null) {
+            return;
+        }
+        Long newSeconds = Long.valueOf(oldSeconds);
+        container.set(simplePlayTime.playtimeKey, PersistentDataType.LONG, newSeconds);
+
+        simplePlayTime.logger.info("Converting playtime for " + player.getName() + " from int -> long for storage.");
     }
 }

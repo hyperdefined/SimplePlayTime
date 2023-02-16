@@ -30,7 +30,7 @@ public class PlayerCounter extends BukkitRunnable {
         this.player = player;
         this.simplePlayTime = simplePlayTime;
         // start the session with 0 seconds
-        simplePlayTime.playerSessions.put(player, 0);
+        simplePlayTime.playerSessions.put(player, 0L);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class PlayerCounter extends BukkitRunnable {
         long lastInteraction = (currentTime - simplePlayTime.playerActivity.get(player)) / 1000000000;
         // if it's shorter than the afk timeout, count the playtime
         if (lastInteraction <= simplePlayTime.config.getInt("afk-timeout")) {
-            int currentSeconds = simplePlayTime.playerSessions.get(player);
+            long currentSeconds = simplePlayTime.playerSessions.get(player);
             simplePlayTime.playerSessions.put(player, currentSeconds + 1);
         }
     }

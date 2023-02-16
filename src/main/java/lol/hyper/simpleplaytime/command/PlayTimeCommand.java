@@ -63,22 +63,22 @@ public class PlayTimeCommand implements CommandExecutor {
 
         Player player = (Player) sender;
         PersistentDataContainer container = player.getPersistentDataContainer();
-        Integer playTime = 0;
-        if (container.has(simplePlayTime.playtimeKey, PersistentDataType.INTEGER)) {
-            playTime = container.get(simplePlayTime.playtimeKey, PersistentDataType.INTEGER);
+        Long playTime = 0L;
+        if (container.has(simplePlayTime.playtimeKey, PersistentDataType.LONG)) {
+            playTime = container.get(simplePlayTime.playtimeKey, PersistentDataType.LONG);
         }
         if (playTime == null) {
             simplePlayTime.logger.severe("Unable to find key for player " + player.getName() + ". This IS a bug. Player's current keys: " + container.getKeys());
             return true;
         }
 
-        int currentSession = simplePlayTime.playerSessions.get(player.getUniqueId());
+        long currentSession = simplePlayTime.playerSessions.get(player.getUniqueId());
         // make sure to account for their current session
         playTime = playTime + currentSession;
-        int days = (int) TimeUnit.SECONDS.toDays(playTime);
-        int hours = (int) (TimeUnit.SECONDS.toHours(playTime) - (days * 24L));
-        int minutes = (int) (TimeUnit.SECONDS.toMinutes(playTime) - (TimeUnit.SECONDS.toHours(playTime) * 60));
-        int seconds = (int) (TimeUnit.SECONDS.toSeconds(playTime) - (TimeUnit.SECONDS.toMinutes(playTime) * 60));
+        long days = TimeUnit.SECONDS.toDays(playTime);
+        long hours = (TimeUnit.SECONDS.toHours(playTime) - (days * 24L));
+        long minutes = (TimeUnit.SECONDS.toMinutes(playTime) - (TimeUnit.SECONDS.toHours(playTime) * 60));
+        long seconds = (TimeUnit.SECONDS.toSeconds(playTime) - (TimeUnit.SECONDS.toMinutes(playTime) * 60));
         Component message = formatTime(days, hours, minutes, seconds);
         simplePlayTime.getAdventure().player(player).sendMessage(message);
         return true;
@@ -93,7 +93,7 @@ public class PlayTimeCommand implements CommandExecutor {
      * @param seconds Seconds.
      * @return A formatted string with the data replaced.
      */
-    private Component formatTime(int days, int hours, int minutes, int seconds) {
+    private Component formatTime(long days, long hours, long minutes, long seconds) {
         String message = simplePlayTime.config.getString("messages.playtime-command");
         if (message == null) {
             return Component.text("Missing message 'messages.playtime-command'").color(NamedTextColor.RED);

@@ -42,7 +42,7 @@ public final class SimplePlayTime extends JavaPlugin {
 
     public final HashMap<UUID, BukkitTask> playerRunnable = new HashMap<>();
     public final HashMap<UUID, Long> playerActivity = new HashMap<>();
-    public final HashMap<UUID, Integer> playerSessions = new HashMap<>();
+    public final HashMap<UUID, Long> playerSessions = new HashMap<>();
     public final Logger logger = this.getLogger();
     public final File configFile = new File(this.getDataFolder(), "config.yml");
     public FileConfiguration config;
