@@ -31,7 +31,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
+import space.arim.morepaperlib.MorePaperLib;
+import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +42,7 @@ import java.util.logging.Logger;
 
 public final class SimplePlayTime extends JavaPlugin {
 
-    public final HashMap<UUID, BukkitTask> playerRunnable = new HashMap<>();
+    public final HashMap<UUID, ScheduledTask> playerRunnable = new HashMap<>();
     public final HashMap<UUID, Long> playerActivity = new HashMap<>();
     public final HashMap<UUID, Long> playerSessions = new HashMap<>();
     public final Logger logger = this.getLogger();
@@ -52,10 +53,12 @@ public final class SimplePlayTime extends JavaPlugin {
     private BukkitAudiences adventure;
 
     public final NamespacedKey playtimeKey = new NamespacedKey(this, "playtime");
+    public MorePaperLib morePaperLib;
 
     @Override
     public void onEnable() {
         this.adventure = BukkitAudiences.create(this);
+        morePaperLib = new MorePaperLib(this);
         loadConfig();
         Bukkit.getPluginManager().registerEvents(new InteractionEvents(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveJoin(this), this);
@@ -64,7 +67,7 @@ public final class SimplePlayTime extends JavaPlugin {
 
         new Metrics(this, 13941);
 
-        Bukkit.getScheduler().runTaskAsynchronously(this, this::checkForUpdates);
+        morePaperLib.scheduling().asyncScheduler().run(this::checkForUpdates);
     }
 
     public void loadConfig() {

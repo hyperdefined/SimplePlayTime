@@ -21,7 +21,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
-public class PlayerCounter extends BukkitRunnable {
+public class PlayerCounter implements Runnable {
 
     private final UUID player;
     private final SimplePlayTime simplePlayTime;

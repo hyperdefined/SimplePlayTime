@@ -4,6 +4,7 @@ main: lol.hyper.simpleplaytime.SimplePlayTime
 api-version: 1.18
 author: hyperdefined
 description: Super simple playtime tracking.
+folia-supported: true
 commands:
   playtime:
     usage: /playtime

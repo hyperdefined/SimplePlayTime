@@ -28,6 +28,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
+import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 public class PlayerLeaveJoin implements Listener {
 
@@ -55,8 +56,9 @@ public class PlayerLeaveJoin implements Listener {
             audiences.player(player).sendMessage(simplePlayTime.getMessage("messages.playtime-start"));
         }
         // create the task for player
-        BukkitTask runnable = new PlayerCounter(player.getUniqueId(), simplePlayTime).runTaskTimer(simplePlayTime, 0, 20);
-        simplePlayTime.playerRunnable.put(player.getUniqueId(), runnable);
+        Runnable runnableTask = new PlayerCounter(player.getUniqueId(), simplePlayTime);
+        ScheduledTask task = simplePlayTime.morePaperLib.scheduling().entitySpecificScheduler(player).runAtFixedRate(runnableTask, null, 1, 20);
+        simplePlayTime.playerRunnable.put(player.getUniqueId(), task);
 
         // store last player activity
         simplePlayTime.playerActivity.put(player.getUniqueId(), System.nanoTime());
