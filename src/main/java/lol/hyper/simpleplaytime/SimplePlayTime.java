@@ -20,8 +20,8 @@ package lol.hyper.simpleplaytime;
 import lol.hyper.githubreleaseapi.GitHubRelease;
 import lol.hyper.githubreleaseapi.GitHubReleaseAPI;
 import lol.hyper.simpleplaytime.command.PlayTimeCommand;
-import lol.hyper.simpleplaytime.events.*;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import lol.hyper.simpleplaytime.events.InteractionEvents;
+import lol.hyper.simpleplaytime.events.PlayerLeaveJoin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -31,8 +31,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import space.arim.morepaperlib.MorePaperLib;
-import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,23 +40,16 @@ import java.util.logging.Logger;
 
 public final class SimplePlayTime extends JavaPlugin {
 
-    public final HashMap<UUID, ScheduledTask> playerRunnable = new HashMap<>();
+    public final HashMap<UUID, PlayerCounter> playerRunnable = new HashMap<>();
     public final HashMap<UUID, Long> playerActivity = new HashMap<>();
     public final HashMap<UUID, Long> playerSessions = new HashMap<>();
     public final Logger logger = this.getLogger();
     public final File configFile = new File(this.getDataFolder(), "config.yml");
     public FileConfiguration config;
-
-    public final MiniMessage miniMessage = MiniMessage.miniMessage();
-    private BukkitAudiences adventure;
-
     public final NamespacedKey playtimeKey = new NamespacedKey(this, "playtime");
-    public MorePaperLib morePaperLib;
 
     @Override
     public void onEnable() {
-        this.adventure = BukkitAudiences.create(this);
-        morePaperLib = new MorePaperLib(this);
         loadConfig();
         Bukkit.getPluginManager().registerEvents(new InteractionEvents(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveJoin(this), this);
@@ -67,7 +58,7 @@ public final class SimplePlayTime extends JavaPlugin {
 
         new Metrics(this, 13941);
 
-        morePaperLib.scheduling().asyncScheduler().run(this::checkForUpdates);
+        Bukkit.getAsyncScheduler().runNow(this, scheduledTask -> checkForUpdates());
     }
 
     public void loadConfig() {
@@ -116,13 +107,6 @@ public final class SimplePlayTime extends JavaPlugin {
             logger.warning(path + " is not a valid message!");
             return Component.text("Invalid path! " + path).color(NamedTextColor.RED);
         }
-        return miniMessage.deserialize(message);
-    }
-
-    public BukkitAudiences getAdventure() {
-        if (this.adventure == null) {
-            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
-        }
-        return this.adventure;
+        return MiniMessage.miniMessage().deserialize(message);
     }
 }

@@ -17,11 +17,10 @@
 
 package lol.hyper.simpleplaytime.command;
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import lol.hyper.simpleplaytime.SimplePlayTime;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.jetbrains.annotations.NotNull;
-import lol.hyper.simpleplaytime.SimplePlayTime;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -29,37 +28,36 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
 public class PlayTimeCommand implements CommandExecutor {
 
     private final SimplePlayTime simplePlayTime;
-    private final BukkitAudiences audiences;
 
     public PlayTimeCommand(SimplePlayTime simplePlayTime) {
         this.simplePlayTime = simplePlayTime;
-        this.audiences = simplePlayTime.getAdventure();
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof ConsoleCommandSender) {
-            audiences.sender(sender).sendMessage(simplePlayTime.getMessage("messages.players-only"));
+            sender.sendMessage(simplePlayTime.getMessage("messages.players-only"));
             return true;
         }
 
         if (!sender.hasPermission("simpleplaytime.command")) {
-            audiences.sender(sender).sendMessage(Component.text("You do not have permission for this command.").color(NamedTextColor.RED));
+            sender.sendMessage(Component.text("You do not have permission for this command.").color(NamedTextColor.RED));
             return true;
         }
 
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             if (sender.hasPermission("simpleplaytime.reload")) {
                 simplePlayTime.loadConfig();
-                audiences.sender(sender).sendMessage(Component.text("Configuration reloaded!").color(NamedTextColor.GREEN));
+                sender.sendMessage(Component.text("Configuration reloaded!").color(NamedTextColor.GREEN));
             } else {
-                audiences.sender(sender).sendMessage(Component.text("You do not have permission for this command.").color(NamedTextColor.RED));
+                sender.sendMessage(Component.text("You do not have permission for this command.").color(NamedTextColor.RED));
             }
             return true;
         }
@@ -83,7 +81,7 @@ public class PlayTimeCommand implements CommandExecutor {
         long minutes = (TimeUnit.SECONDS.toMinutes(playTime) - (TimeUnit.SECONDS.toHours(playTime) * 60));
         long seconds = (TimeUnit.SECONDS.toSeconds(playTime) - (TimeUnit.SECONDS.toMinutes(playTime) * 60));
         Component message = formatTime(days, hours, minutes, seconds);
-        audiences.player(player).sendMessage(message);
+        sender.sendMessage(message);
         return true;
     }
 
@@ -113,6 +111,6 @@ public class PlayTimeCommand implements CommandExecutor {
         if (message.contains("%seconds%")) {
             message = message.replace("%seconds%", String.valueOf(seconds));
         }
-        return simplePlayTime.miniMessage.deserialize(message);
+        return MiniMessage.miniMessage().deserialize(message);
     }
 }

@@ -17,14 +17,16 @@
 
 package lol.hyper.simpleplaytime;
 
-import org.bukkit.scheduler.BukkitRunnable;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
-public class PlayerCounter implements Runnable {
+public class PlayerCounter implements Consumer<ScheduledTask> {
 
     private final UUID player;
     private final SimplePlayTime simplePlayTime;
+    private ScheduledTask task;
 
     public PlayerCounter(UUID player, SimplePlayTime simplePlayTime) {
         this.player = player;
@@ -34,15 +36,21 @@ public class PlayerCounter implements Runnable {
     }
 
     @Override
-    public void run() {
+    public void accept(ScheduledTask task) {
+        this.task = task;
         // get the current time
         long currentTime = System.nanoTime();
         // see how much time has past since last player interaction
         long lastInteraction = (currentTime - simplePlayTime.playerActivity.get(player)) / 1000000000;
         // if it's shorter than the afk timeout, count the playtime
         if (lastInteraction <= simplePlayTime.config.getInt("afk-timeout")) {
-            long currentSeconds = simplePlayTime.playerSessions.get(player);
-            simplePlayTime.playerSessions.put(player, currentSeconds + 1);
+            simplePlayTime.playerSessions.compute(player, (k, currentSeconds) -> currentSeconds + 1);
+        }
+    }
+
+    public void cancel() {
+        if (task != null) {
+            this.task.cancel();
         }
     }
 }

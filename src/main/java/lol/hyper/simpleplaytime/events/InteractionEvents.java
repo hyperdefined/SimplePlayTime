@@ -17,6 +17,7 @@
 
 package lol.hyper.simpleplaytime.events;
 
+import io.papermc.paper.event.player.AsyncChatEvent;
 import lol.hyper.simpleplaytime.SimplePlayTime;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,7 +39,7 @@ public class InteractionEvents implements Listener {
     }
 
     @EventHandler
-    public void onChat(AsyncPlayerChatEvent event) {
+    public void onChat(AsyncChatEvent event) {
         UUID player = event.getPlayer().getUniqueId();
         // store last player activity
         simplePlayTime.playerActivity.put(player, System.nanoTime());

@@ -19,7 +19,6 @@ package lol.hyper.simpleplaytime.events;
 
 import lol.hyper.simpleplaytime.PlayerCounter;
 import lol.hyper.simpleplaytime.SimplePlayTime;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,17 +26,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.scheduler.BukkitTask;
-import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 public class PlayerLeaveJoin implements Listener {
 
     private final SimplePlayTime simplePlayTime;
-    private final BukkitAudiences audiences;
 
     public PlayerLeaveJoin(SimplePlayTime simplePlayTime) {
         this.simplePlayTime = simplePlayTime;
-        this.audiences = simplePlayTime.getAdventure();
     }
 
     @EventHandler
@@ -53,11 +48,11 @@ public class PlayerLeaveJoin implements Listener {
         if (!container.has(simplePlayTime.playtimeKey, PersistentDataType.LONG)) {
             // set their play time to zero seconds
             container.set(simplePlayTime.playtimeKey, PersistentDataType.LONG, 0L);
-            audiences.player(player).sendMessage(simplePlayTime.getMessage("messages.playtime-start"));
+            player.sendMessage(simplePlayTime.getMessage("messages.playtime-start"));
         }
         // create the task for player
-        Runnable runnableTask = new PlayerCounter(player.getUniqueId(), simplePlayTime);
-        ScheduledTask task = simplePlayTime.morePaperLib.scheduling().entitySpecificScheduler(player).runAtFixedRate(runnableTask, null, 1, 20);
+        PlayerCounter task = new PlayerCounter(player.getUniqueId(), simplePlayTime);
+        player.getScheduler().runAtFixedRate(simplePlayTime, task, null, 1, 20);
         simplePlayTime.playerRunnable.put(player.getUniqueId(), task);
 
         // store last player activity
