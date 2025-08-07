@@ -17,15 +17,16 @@
 
 package lol.hyper.simpleplaytime;
 
-import lol.hyper.githubreleaseapi.GitHubRelease;
-import lol.hyper.githubreleaseapi.GitHubReleaseAPI;
+import lol.hyper.hyperlib.HyperLib;
+import lol.hyper.hyperlib.bstats.HyperStats;
+import lol.hyper.hyperlib.releases.HyperUpdater;
+import lol.hyper.hyperlib.utils.TextUtils;
 import lol.hyper.simpleplaytime.command.PlayTimeCommand;
 import lol.hyper.simpleplaytime.events.InteractionEvents;
 import lol.hyper.simpleplaytime.events.PlayerLeaveJoin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bstats.bukkit.Metrics;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -33,32 +34,43 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 public final class SimplePlayTime extends JavaPlugin {
 
     public final HashMap<UUID, PlayerCounter> playerRunnable = new HashMap<>();
     public final HashMap<UUID, Long> playerActivity = new HashMap<>();
     public final HashMap<UUID, Long> playerSessions = new HashMap<>();
-    public final Logger logger = this.getLogger();
+    public final ComponentLogger logger = this.getComponentLogger();
     public final File configFile = new File(this.getDataFolder(), "config.yml");
     public FileConfiguration config;
     public final NamespacedKey playtimeKey = new NamespacedKey(this, "playtime");
 
+    public HyperLib hyperLib;
+    public TextUtils textUtils;
+
     @Override
     public void onEnable() {
+        hyperLib = new HyperLib(this);
+        hyperLib.setup();
+
+        HyperStats stats = new HyperStats(hyperLib, 13941);
+        stats.setup();
+
+        textUtils = new TextUtils(hyperLib);
+
         loadConfig();
         Bukkit.getPluginManager().registerEvents(new InteractionEvents(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveJoin(this), this);
 
         this.getCommand("playtime").setExecutor(new PlayTimeCommand(this));
 
-        new Metrics(this, 13941);
-
-        Bukkit.getAsyncScheduler().runNow(this, scheduledTask -> checkForUpdates());
+        HyperUpdater updater = new HyperUpdater(hyperLib);
+        updater.setGitHub("hyperdefined", "SimplePlayTime");
+        updater.setModrinth("Z84sevGO");
+        updater.setHangar("SimplePlayTime", "paper");
+        updater.check();
     }
 
     public void loadConfig() {
@@ -68,30 +80,7 @@ public final class SimplePlayTime extends JavaPlugin {
         config = YamlConfiguration.loadConfiguration(configFile);
         int CONFIG_VERSION = 2;
         if (config.getInt("config-version") != CONFIG_VERSION) {
-            logger.warning("You configuration is out of date! Some features may not work!");
-        }
-    }
-
-    public void checkForUpdates() {
-        GitHubReleaseAPI api;
-        try {
-            api = new GitHubReleaseAPI("SimplePlayTime", "hyperdefined");
-        } catch (IOException e) {
-            logger.warning("Unable to check updates!");
-            e.printStackTrace();
-            return;
-        }
-        GitHubRelease current = api.getReleaseByTag(this.getDescription().getVersion());
-        GitHubRelease latest = api.getLatestVersion();
-        if (current == null) {
-            logger.warning("You are running a version that does not exist on GitHub. If you are in a dev environment, you can ignore this. Otherwise, this is a bug!");
-            return;
-        }
-        int buildsBehind = api.getBuildsBehind(current);
-        if (buildsBehind == 0) {
-            logger.info("You are running the latest version.");
-        } else {
-            logger.warning("A new version is available (" + latest.getTagVersion() + ")! You are running version " + current.getTagVersion() + ". You are " + buildsBehind + " version(s) behind.");
+            logger.warn("You configuration is out of date! Some features may not work!");
         }
     }
 
@@ -104,9 +93,9 @@ public final class SimplePlayTime extends JavaPlugin {
     public Component getMessage(String path) {
         String message = config.getString(path);
         if (message == null) {
-            logger.warning(path + " is not a valid message!");
+            logger.warn("{} is not a valid message!", path);
             return Component.text("Invalid path! " + path).color(NamedTextColor.RED);
         }
-        return MiniMessage.miniMessage().deserialize(message);
+        return textUtils.format(message);
     }
 }

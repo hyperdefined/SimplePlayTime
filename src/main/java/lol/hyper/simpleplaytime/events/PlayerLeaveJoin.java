@@ -70,7 +70,7 @@ public class PlayerLeaveJoin implements Listener {
         }
         // make sure the player has the key
         if (currentPlayTime == null) {
-            simplePlayTime.logger.severe("Unable to find key for player " + player.getName() + ". This IS a bug. Player's current keys: " + container.getKeys());
+            simplePlayTime.logger.warn("Unable to find key for player {}. This IS a bug. Player's current keys: {}", player.getName(), container.getKeys());
             return;
         }
         // set the player's time recorded in their last session + their current time recorded
@@ -88,7 +88,7 @@ public class PlayerLeaveJoin implements Listener {
      */
     private void convertDataType(Player player) {
         PersistentDataContainer container = player.getPersistentDataContainer();
-        Integer oldSeconds = null;
+        Integer oldSeconds;
         // don't need to check if the player has this, since we already did
         oldSeconds = container.get(simplePlayTime.playtimeKey, PersistentDataType.INTEGER);
         if (oldSeconds == null) {
@@ -97,6 +97,6 @@ public class PlayerLeaveJoin implements Listener {
         Long newSeconds = Long.valueOf(oldSeconds);
         container.set(simplePlayTime.playtimeKey, PersistentDataType.LONG, newSeconds);
 
-        simplePlayTime.logger.info("Converting playtime for " + player.getName() + " from int -> long for storage.");
+        simplePlayTime.logger.info("Converting playtime for {} from int -> long for storage.", player.getName());
     }
 }

@@ -20,7 +20,6 @@ package lol.hyper.simpleplaytime.command;
 import lol.hyper.simpleplaytime.SimplePlayTime;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -41,7 +40,7 @@ public class PlayTimeCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
         if (sender instanceof ConsoleCommandSender) {
             sender.sendMessage(simplePlayTime.getMessage("messages.players-only"));
             return true;
@@ -69,7 +68,7 @@ public class PlayTimeCommand implements CommandExecutor {
             playTime = container.get(simplePlayTime.playtimeKey, PersistentDataType.LONG);
         }
         if (playTime == null) {
-            simplePlayTime.logger.severe("Unable to find key for player " + player.getName() + ". This IS a bug. Player's current keys: " + container.getKeys());
+            simplePlayTime.logger.warn("Unable to find key for player {}. This IS a bug. Player's current keys: {}", player.getName(), container.getKeys());
             return true;
         }
 
@@ -111,6 +110,6 @@ public class PlayTimeCommand implements CommandExecutor {
         if (message.contains("%seconds%")) {
             message = message.replace("%seconds%", String.valueOf(seconds));
         }
-        return MiniMessage.miniMessage().deserialize(message);
+        return simplePlayTime.textUtils.format(message);
     }
 }
