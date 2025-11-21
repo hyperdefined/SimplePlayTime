@@ -18,3 +18,9 @@ permissions:
   simpleplaytime.reload:
     description: Allows the usage of /playtime reload.
     default: op
+  simpleplaytime.reset:
+    description: Allows the usage of /playtime reset.
+    default: op
+  simpleplaytime.add:
+    description: Allows the usage of /playtime add.
+    default: op

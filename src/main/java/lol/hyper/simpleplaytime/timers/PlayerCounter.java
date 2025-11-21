@@ -15,9 +15,10 @@
  * along with SimplePlayTime.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package lol.hyper.simpleplaytime;
+package lol.hyper.simpleplaytime.timers;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import lol.hyper.simpleplaytime.SimplePlayTime;
 
 import java.util.UUID;
 import java.util.function.Consumer;

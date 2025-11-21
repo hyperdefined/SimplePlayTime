@@ -24,6 +24,9 @@ import lol.hyper.hyperlib.utils.TextUtils;
 import lol.hyper.simpleplaytime.command.PlayTimeCommand;
 import lol.hyper.simpleplaytime.events.InteractionEvents;
 import lol.hyper.simpleplaytime.events.PlayerLeaveJoin;
+import lol.hyper.simpleplaytime.papi.SimplePlayTimeExpansion;
+import lol.hyper.simpleplaytime.timers.PlayerCounter;
+import lol.hyper.simpleplaytime.tools.PlayTimeTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
@@ -44,6 +47,7 @@ public final class SimplePlayTime extends JavaPlugin {
     public final HashMap<UUID, Long> playerSessions = new HashMap<>();
     public final ComponentLogger logger = this.getComponentLogger();
     public final File configFile = new File(this.getDataFolder(), "config.yml");
+    public PlayTimeTools playTimeTools;
     public FileConfiguration config;
     public final NamespacedKey playtimeKey = new NamespacedKey(this, "playtime");
 
@@ -59,6 +63,17 @@ public final class SimplePlayTime extends JavaPlugin {
         stats.setup();
 
         textUtils = new TextUtils(hyperLib);
+        playTimeTools = new PlayTimeTools(this);
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            logger.info("PlaceholderAPI is detected! Enabling support.");
+            SimplePlayTimeExpansion expansion = new SimplePlayTimeExpansion(this);
+            if (expansion.register()) {
+                logger.info("Successfully registered placeholders!");
+            } else {
+                logger.warn("Unable to register placeholders!");
+            }
+        }
 
         loadConfig();
         Bukkit.getPluginManager().registerEvents(new InteractionEvents(this), this);

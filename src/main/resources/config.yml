@@ -2,6 +2,10 @@
 # This time is in seconds.
 afk-timeout: 30
 
+format:
+  short: "%days%d %hours%:%minutes%:%seconds%"
+  session: "%hours%:%minutes%:%seconds%"
+
 messages:
   players-only: "<red>This command is for players only.</red>"
   playtime-start: "<green>Your playtime is now being tracked! See your playtime via /playtime!</green>"
