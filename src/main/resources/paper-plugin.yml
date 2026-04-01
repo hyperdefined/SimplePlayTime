@@ -6,6 +6,9 @@ author: hyperdefined
 description: Super simple playtime tracking.
 website: https://github.com/hyperdefined/SimplePlayTime/
 folia-supported: true
+
+loader: lol.hyper.simpleplaytime.SimplePlayTimeLoader
+
 commands:
   playtime:
     usage: /playtime

@@ -79,7 +79,7 @@ public final class SimplePlayTime extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new InteractionEvents(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveJoin(this), this);
 
-        this.getCommand("playtime").setExecutor(new PlayTimeCommand(this));
+        registerCommand("playtime", new PlayTimeCommand(this));
 
         HyperUpdater updater = new HyperUpdater(hyperLib);
         updater.setGitHub("hyperdefined", "SimplePlayTime");

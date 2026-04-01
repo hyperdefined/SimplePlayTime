@@ -17,24 +17,26 @@
 
 package lol.hyper.simpleplaytime.command;
 
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import lol.hyper.simpleplaytime.SimplePlayTime;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PlayTimeCommand implements CommandExecutor {
+public class PlayTimeCommand implements BasicCommand {
 
     private final SimplePlayTime simplePlayTime;
 
@@ -43,28 +45,29 @@ public class PlayTimeCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
+    public void execute(@NonNull CommandSourceStack source, String @NonNull [] args) {
+        CommandSender sender = source.getSender();
         if (!sender.hasPermission("simpleplaytime.command")) {
             sender.sendMessage(Component.text("You do not have permission for this command.").color(NamedTextColor.RED));
-            return true;
+            return;
         }
 
         // if there are no args, send playtime
         if (args.length == 0) {
             if (sender instanceof ConsoleCommandSender) {
                 sender.sendMessage(simplePlayTime.getMessage("messages.players-only"));
-                return true;
+                return;
             }
             Player player = (Player) sender;
             showPlaytime(player);
-            return true;
+            return;
         }
 
         switch (args[0].toLowerCase()) {
             case "reload": {
                 if (!sender.hasPermission("simpleplaytime.reload")) {
                     sender.sendMessage(Component.text("You do not have permission for this command.").color(NamedTextColor.RED));
-                    return true;
+                    return;
                 }
 
                 simplePlayTime.loadConfig();
@@ -74,20 +77,20 @@ public class PlayTimeCommand implements CommandExecutor {
             case "reset": {
                 if (!sender.hasPermission("simpleplaytime.reset")) {
                     sender.sendMessage(Component.text("You do not have permission for this command.").color(NamedTextColor.RED));
-                    return true;
+                    return;
                 }
 
                 // player did not type /simpleplaytime reset player
                 if (args.length < 2) {
                     sender.sendMessage(Component.text("You must specify a player to reset!").color(NamedTextColor.RED));
-                    return true;
+                    return;
                 }
 
                 // get the player to reset
                 Player playerToReset = Bukkit.getPlayerExact(args[1]);
                 if (playerToReset == null) {
                     sender.sendMessage(Component.text("That player is invalid or offline!").color(NamedTextColor.RED));
-                    return true;
+                    return;
                 }
                 simplePlayTime.playTimeTools.reset(playerToReset);
                 sender.sendMessage(Component.text("Playtime for " + playerToReset.getName() + " has been reset!").color(NamedTextColor.GREEN));
@@ -96,23 +99,23 @@ public class PlayTimeCommand implements CommandExecutor {
             case "add": {
                 if (!sender.hasPermission("simpleplaytime.add")) {
                     sender.sendMessage(Component.text("You do not have permission for this command.").color(NamedTextColor.RED));
-                    return true;
+                    return;
                 }
                 // player did not type /simpleplaytime add time player
                 if (args.length < 3) {
                     sender.sendMessage(Component.text("You must specify a time and player to add to!").color(NamedTextColor.RED));
-                    return true;
+                    return;
                 }
                 // get the player to reset
                 Player playerToAdd = Bukkit.getPlayerExact(args[2]);
                 if (playerToAdd == null) {
                     sender.sendMessage(Component.text("That player is invalid or offline!").color(NamedTextColor.RED));
-                    return true;
+                    return;
                 }
                 long durationToAdd = inputToSeconds(args[1]);
                 if (durationToAdd == -1) {
                     sender.sendMessage(Component.text("Invalid time format!").color(NamedTextColor.RED));
-                    return true;
+                    return;
                 }
                 simplePlayTime.playTimeTools.addTime(playerToAdd, durationToAdd);
                 sender.sendMessage(Component.text("Playtime for " + playerToAdd.getName() + " has been added!").color(NamedTextColor.GREEN));
@@ -124,7 +127,41 @@ public class PlayTimeCommand implements CommandExecutor {
                 break;
             }
         }
-        return true;
+    }
+
+    @Override
+    public String permission() {
+        return "simpleplaytime.command";
+    }
+
+    @Override
+    public @NonNull Collection<String> suggest(@NonNull CommandSourceStack source, String @NonNull [] args) {
+        CommandSender sender = source.getSender();
+        if (args.length == 0) {
+            List<String> suggestions = new ArrayList<>();
+            if (sender.hasPermission("simpleplaytime.reload")) {
+                suggestions.add("reload");
+            }
+            if (sender.hasPermission("simpleplaytime.reset")) {
+                suggestions.add("reset");
+            }
+            if (sender.hasPermission(" simpleplaytime.add")) {
+                suggestions.add("add");
+            }
+            return suggestions;
+        }
+
+        // suggest player for reset
+        if (args.length == 2 && args[0].equalsIgnoreCase("reset") && sender.hasPermission("simpleplaytime.reset")) {
+            return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+        }
+
+        // suggest player for add
+        if (args.length == 3 && args[0].equalsIgnoreCase("add") && sender.hasPermission("simpleplaytime.add")) {
+            return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+        }
+
+        return Collections.emptyList();
     }
 
     /**
