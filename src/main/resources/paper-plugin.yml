@@ -1,7 +1,7 @@
 name: SimplePlayTime
-version: '${project.version}'
+version: ${version}
 main: lol.hyper.simpleplaytime.SimplePlayTime
-api-version: 1.21
+api-version: '26.1.1'
 author: hyperdefined
 description: Super simple playtime tracking.
 website: https://github.com/hyperdefined/SimplePlayTime/
